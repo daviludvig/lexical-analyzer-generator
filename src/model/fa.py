@@ -18,7 +18,7 @@ class State:
         self.transitions.add(transition)
         
 class Transition:
-    def __init__(self, source_state : State = None,input_symbol: State = None, target_state : State = None):
+    def __init__(self, source_state : State = None, input_symbol: str = None, target_state : State = None):
         self.source_state : State = source_state
         self.input_symbol : str = input_symbol   # Símbolo da entrada que aciona a transição (por exemplo, 'a', '0', etc.)
         self.target_state : State = target_state   # Estado de destino para o qual a transição leva
