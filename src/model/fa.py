@@ -64,9 +64,9 @@ class FA(ABC):
         return (
             f"<{self.__class__.__name__}(\n"
             f"  States: {[state.name for state in self.states]},\n"
-            f"  Alphabet: {sorted(self.alphabet)},\n"
             f"  Initial: {self.initial_state.name if self.initial_state else None},\n"
             f"  Finals: {[state.name for state in self.final_states]},\n"
+            f"  Alphabet: {sorted(self.alphabet)},\n"
             f"  Transitions: \n  [\n    " +
             ",\n    ".join(
                 f"{t.source_state.name} --{t.input_symbol}--> {t.target_state.name}"
