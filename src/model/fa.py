@@ -78,7 +78,6 @@ class FA(ABC):
     
     def getTabularFormat(self) -> str:
         """Retorna a representação do autômato no formato jFlap."""
-        named_sorted_states = sorted(self.states, key=lambda s: s.name)
         transitions = sorted(self.transitions, key=lambda t: (t.source_state.name, t.input_symbol))
         
         output = []
