@@ -33,18 +33,22 @@ class NFA(FA):
 
             found = False
             next_states = set()
-            for transition in current_states.transitions:
-                if transition.input_symbol == symbol:
-                    next_states.add(transition.target_state)
-                    # Aplica o fecho-epsilon nos estados alcançados
-                    current_states = self.epsilon_closure(next_states)
-                    found = True
-                    break
+            for state in current_states:
+                for transition in state.transitions:
+                    if transition.input_symbol == symbol:
+                        next_states.add(transition.target_state)
+                        # Aplica o fecho-epsilon nos estados alcançados
+            
+            current_states = self.epsilon_closure(next_states)
+            
+            if next_states:
+                found = True
+                        
                 
             if not found:
                 return False
             
-        return current_states.is_final
+        return any(state.is_final for state in current_states)
     
     def _find_state_by_name(self, name: str) -> State:
         for state in self.states:
