@@ -90,3 +90,7 @@ class FA(ABC):
             output.append(f"{t.source_state.name},{t.input_symbol},{t.target_state.name}")
     
         return "\n".join(output)
+    
+
+    def _clone_with_prefix(self, prefix : str) -> FA:
+        
