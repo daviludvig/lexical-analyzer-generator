@@ -6,7 +6,7 @@ class NFA(FA):
         super().__init__(alphabet)
         self.epsilon = "&"
 
-    #Calcula o fecho-epsilon de um conjunto de estados
+    # Calcula o fecho-epsilon de um conjunto de estados
     def epsilon_closure(self, states: Set[State]) -> Set[State]:
         
         closure = set(states)
@@ -55,3 +55,17 @@ class NFA(FA):
             if state.name == name:
                 return state
         raise ValueError(f"Estado '{name}' não encontrado.")
+    
+    def deltaHat(self, state, inputString):
+        """inputString: sequencia de simbolos do alfabeto"""
+        """deltaHat is smart enough to return the empty set if no transition is defined."""
+        states = set([state])
+        for a in inputString:
+            newStates = set([])
+            for state in states:
+                try: 
+                    #newStates = newStates | self.delta[state][a]
+                    newStates = newStates | self.transitions[state][a]
+                except KeyError: pass
+            states = newStates
+        return states
