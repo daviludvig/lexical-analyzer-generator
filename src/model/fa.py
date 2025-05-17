@@ -90,3 +90,32 @@ class FA(ABC):
             output.append(f"{t.source_state.name},{t.input_symbol},{t.target_state.name}")
     
         return "\n".join(output)
+
+    def _cloneWithPrefix(self, prefix : str) -> FA:
+        new_fa = self.__class__(self.alphabet.copy())
+
+        state_map : Dict[str, State] = {}
+        for state in self.states:
+            new_state : State = State(
+                name=f"{prefix}{state.name}",
+                is_initial=state.is_initial,
+                is_final=state.is_final
+            )
+            state_map[state.name] = new_state
+            new_fa.addState(new_state)
+            
+            
+        for transition in self.transitions:
+            new_transition : Transition = Transition(
+                source_state=state_map[transition.source_state.name],
+                input_symbol=transition.input_symbol,
+                target_state=state_map[transition.target_state.name]
+            )
+            new_fa.addTransition(new_transition)
+            
+        return new_fa
+    
+    def _disableInitialState(self) -> None:
+        """Desabilita o estado inicial do autômato."""
+        if self.initial_state is not None:
+            self.initial_state.is_initial = False

@@ -1,8 +1,7 @@
 import model.nfa as nfa
 import model.fa as fa
 
-def main():
-    
+def build_nfa() -> nfa.NFA:
     alphabet : fa.Set[str] = {"a", "b", "&"}
     
     q0 : fa.State = fa.State(name='q0', is_initial=True, is_final=False)
@@ -23,6 +22,12 @@ def main():
     no_det_fa.addStates({q0,q1,q2,q3,q4,q5})
     no_det_fa.addTransitions({t1,t2,t3,t4,t5,t6})
     
+    return no_det_fa
+
+def main():
+    
+    no_det_fa : nfa.NFA = build_nfa()
+    
     print(no_det_fa)
     
     input_example1 : str = "a"
@@ -39,6 +44,8 @@ def main():
     print(f"Is input '{input_example5}' valid: {no_det_fa.isValidInput(input_example5)}")  #resultado esperado: FALSE
     
     print("\n" + no_det_fa.getTabularFormat())
+
+    print(no_det_fa._cloneWithPrefix("copy_"))
 
 if __name__ == "__main__":
     main()
