@@ -119,3 +119,9 @@ class FA(ABC):
         """Desabilita o estado inicial do autômato."""
         if self.initial_state is not None:
             self.initial_state.is_initial = False
+            
+    def _find_state_by_name(self, name: str) -> State:
+        for state in self.states:
+            if state.name == name:
+                return state
+        raise ValueError(f"Estado '{name}' não encontrado.")

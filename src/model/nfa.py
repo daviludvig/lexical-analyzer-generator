@@ -1,3 +1,4 @@
+from typing import Union
 from .fa import FA, State, Set
 
 class NFA(FA):
@@ -50,8 +51,9 @@ class NFA(FA):
             
         return any(state.is_final for state in current_states)
     
-    def _find_state_by_name(self, name: str) -> State:
-        for state in self.states:
-            if state.name == name:
-                return state
-        raise ValueError(f"Estado '{name}' não encontrado.")
+    def getDestinationStatesFromTransition(self, source_state : Union[State, str], symbol : str) -> Set[State]:
+        source_state_obj = source_state
+        if isinstance(source_state, str):
+            source_state_obj = self._find_state_by_name(source_state)
+        return {t.target_state for t in self.transitions
+            if t.source_state == source_state_obj and t.input_symbol == symbol}
