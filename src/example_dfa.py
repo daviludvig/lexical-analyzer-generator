@@ -29,6 +29,8 @@ def main():
     print("\n" + det_fa.getTabularFormat())
 
     print(det_fa._cloneWithPrefix("copy_"))
+    
+    print(det_fa.getDestinationStateFromTransition("q0", "b"))
 
 if __name__ == "__main__":
     main()

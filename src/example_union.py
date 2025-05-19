@@ -12,5 +12,7 @@ def main():
     new_nfa : nfa.NFA = union.union(det_fa, no_det_fa)
     print(new_nfa)
     
+    print(new_nfa.getDestinationStatesFromTransition(new_nfa.initial_state, "&"))
+    
 if __name__ == "__main__":
     main()
