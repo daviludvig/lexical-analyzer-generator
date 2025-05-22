@@ -8,7 +8,9 @@ def main():
     
     no_det_fa : nfa.NFA = example_nfa.build_nfa()
     
-    DFA = conversion.NFAtoDFA(no_det_fa)
+    det_fa = conversion.NFAtoDFA(no_det_fa)
+
+    print("\n" + det_fa.getTabularFormat())
     
 if __name__ == "__main__":
     main()

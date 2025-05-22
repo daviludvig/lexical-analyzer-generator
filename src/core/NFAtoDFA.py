@@ -24,8 +24,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     Q = set([q0])
     unprocessedQ = Q.copy()  # unprocessedQ tracks states for which delta is not yet defined
 
-    print( "[DEBUG] ", "unprocessedQ  ", unprocessedQ)
-
     # Transições
     delta = {}
 
@@ -34,7 +32,7 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
 
     # Enquanto os estados não forem marcados
     while unprocessedQ: 
-        print( "[DEBUG] ", "unprocessedQ  ", unprocessedQ)
+        
         # Retira um conj de estados dos que não foram marcados e processa
         qSet = unprocessedQ.pop()
 
@@ -57,26 +55,19 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
                     Q.add(nextStates)
                     unprocessedQ.add(nextStates)
 
-    print( "[DEBUG]", "saiu while,")
     for qSet in Q: 
         # Verifica se o estado final da NFA está naquele novo estado
         if (qSet & nfa.final_states): 
             F.append(qSet)
-        for a in nfa.alphabet:
-            if a != "&":
-                print( "[DEBUG]", qSet, " -> ", a, " -> ", delta[qSet][a] )
-
 
 	# Aqui vou ter: 
 	# Q - set de todos os estados, com diversos frozensets, que são combinação de estados da NFA
     # F - set de todos estados finais
     # delta [estado] [simbolo do alfabeto]
 
-    #M = dfa.DFA(delta, q0, F)
-
     #Cria DFA
     DFA_alphabet = nfa.alphabet - {"&"}
-    print("DEBUG DFA ALFABET", DFA_alphabet)
+    
     final_DFA = dfa.DFA(DFA_alphabet)
     DFA_states = set()
     DFA_transitions = set()
@@ -94,38 +85,35 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
             DFA_states.add(qi)
             states_list.append((qi,subset))
             i+=1
-    print("DEBUG DFA states", DFA_states, "\n")
-    print("DEBUG DFA states list", states_list, "\n")
 
     #Transições DFA - precisa mapear Delta
     # Set -> ordem não é garantida
     for subset in Q:
 
         for s in DFA_alphabet:
-            
-            # Traduzir para os estados anteriores:
+            # Se aquele conjunto é vazio, passa para o proximo
             if (subset) == frozenset():
-                break
+                continue
+            # Se a transição leva para um vazio, passa para o proximo
             if delta[subset][s] == frozenset():
-                break
-            print("[debug passou aqui] subset atual ", subset, "delta atual", delta[subset][s], "\n" )
+                continue
 
-            print( "[DEBUG final]", subset, " -> ", s, " -> ", delta[subset][s] , "\n")
+            # Para cada tupla na lista
             for state_tuple in states_list:
                 
                 if subset in state_tuple:
                     source_state = state_tuple[0]
                 if delta[subset][s] in state_tuple:
                     target_state = state_tuple[0]
+            
 
-            print( "[DEBUG transition]", source_state, " -> ", s, " -> ", target_state , "\n")
+
             ti : fa.Transition = fa.Transition(source_state=source_state, input_symbol=s, target_state=target_state)
             DFA_transitions.add(ti)
-    print("DEBUG DFA trans", DFA_transitions, "\n")
+
     
     final_DFA.addStates(DFA_states)
     final_DFA.addTransitions(DFA_transitions)
 
-    print("debug \n" + final_DFA.getTabularFormat())
 
     return final_DFA

@@ -72,50 +72,15 @@ class NFA(FA):
 
         # Aplica o fecho-epsilon inicial
         current_states = self.epsilon_closure(states)
-        print( "[DEBUG] ", "ε-fecho inicial:", current_states)
 
         # Realiza as transições pelo símbolo
         next_states = set()
         for st in current_states:
             destinations = self.getDestinationStatesFromTransition(st, symbol)
-            print( "[DEBUG] ", f"Transições de {st} com símbolo '{symbol}': {destinations}")
             next_states.update(destinations)
 
         # Aplica o fecho-epsilon final
         result_states = self.epsilon_closure(next_states)
-        print( "[DEBUG] ", "ε-fecho após transições:", result_states)
 
         return result_states
 
-    '''
-    
-    def deltaHat(self, state, inputString):
-        """
-    Calcula o conjunto de estados alcançáveis a partir de um estado dado
-    ao consumir uma string de entrada, incluindo transições-ε entre os símbolos.
-    """
-        states = self.epsilon_closure({state})  # começa com fecho-epsilon do estado inicial
-
-        print( "[DEBUG] ", "epsilom fecho ", state, " " , states)
-
-        for symbol in inputString:
-            if symbol not in self.alphabet:
-                raise ValueError(f"Símbolo inválido: {symbol}")
-
-            next_states = set()
-            for st in states:
-                destinations = self.getDestinationStatesFromTransition(st, symbol)
-                print( "[DEBUG] ", "destinations: ", st, symbol, "->", destinations)
-                next_states.update(destinations)
-
-            states = self.epsilon_closure(next_states)
-
-        return states
-    
-    def deltaHatSet(self, states: Set[State], inputString: str) -> Set[State]:
-        result = set()
-        for state in states:
-            result |= self.deltaHat(state, inputString)
-        return result
-
-        '''
