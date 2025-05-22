@@ -123,7 +123,7 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
             DFA_transitions.add(ti)
     print("DEBUG DFA trans", DFA_transitions, "\n")
     
-    final_DFA.addState(DFA_states)
+    final_DFA.addStates(DFA_states)
     final_DFA.addTransitions(DFA_transitions)
 
     print("debug \n" + final_DFA.getTabularFormat())
