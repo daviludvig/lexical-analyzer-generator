@@ -80,9 +80,11 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     final_DFA = dfa.DFA(DFA_alphabet)
     DFA_states = set()
     DFA_transitions = set()
-
+    states_list = list()
+    i = 0
     # Cria objetos estado da DFA
-    for i, subset in enumerate(Q):
+    for j, subset in enumerate(Q):
+
         is_initial = (subset == q0)
         is_final = bool(subset & nfa.final_states)
 
@@ -90,15 +92,36 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
             qi = fa.State(name='q' + str(i), is_initial=is_initial, is_final=is_final)
 
             DFA_states.add(qi)
-            print("DEBUG DFA states", DFA_states, "\n")
+            states_list.append((qi,subset))
+            i+=1
+    print("DEBUG DFA states", DFA_states, "\n")
+    print("DEBUG DFA states list", states_list, "\n")
 
     #Transições DFA - precisa mapear Delta
-    for state in DFA_states:
+    # Set -> ordem não é garantida
+    for subset in Q:
+
         for s in DFA_alphabet:
-            print("DEBUG DFA", delta[state][s] , "\n")
-            ti : fa.Transition = fa.Transition(source_state=state, input_symbol=s, target_state=delta[state][s])
+            
+            # Traduzir para os estados anteriores:
+            if (subset) == frozenset():
+                break
+            if delta[subset][s] == frozenset():
+                break
+            print("[debug passou aqui] subset atual ", subset, "delta atual", delta[subset][s], "\n" )
+
+            print( "[DEBUG final]", subset, " -> ", s, " -> ", delta[subset][s] , "\n")
+            for state_tuple in states_list:
+                
+                if subset in state_tuple:
+                    source_state = state_tuple[0]
+                if delta[subset][s] in state_tuple:
+                    target_state = state_tuple[0]
+
+            print( "[DEBUG transition]", source_state, " -> ", s, " -> ", target_state , "\n")
+            ti : fa.Transition = fa.Transition(source_state=source_state, input_symbol=s, target_state=target_state)
             DFA_transitions.add(ti)
-            print("DEBUG DFA trans", DFA_transitions, "\n")
+    print("DEBUG DFA trans", DFA_transitions, "\n")
     
     final_DFA.addState(DFA_states)
     final_DFA.addTransitions(DFA_transitions)
