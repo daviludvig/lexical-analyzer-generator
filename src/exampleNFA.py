@@ -9,7 +9,7 @@ def build_nfa() -> nfa.NFA:
     q2 : fa.State = fa.State(name='q2', is_initial=False, is_final=True)
     q3 : fa.State = fa.State(name='q3', is_initial=False, is_final=False)
     q4 : fa.State = fa.State(name='q4', is_initial=False, is_final=True)
-    q5 : fa.State = fa.State(name='q5', is_initial=False, is_final=True)
+    q5 : fa.State = fa.State(name='q5', is_initial=False, is_final=False)
     
     t1 : fa.Transition = fa.Transition(source_state=q0, input_symbol="&", target_state=q1)
     t2 : fa.Transition = fa.Transition(source_state=q0, input_symbol="&", target_state=q3)

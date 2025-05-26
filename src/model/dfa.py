@@ -1,4 +1,5 @@
 from .fa import FA, State, Set
+from typing import Union
 
 class DFA(FA):
     def __init__(self, alphabet : Set[str]) -> None:
@@ -24,8 +25,12 @@ class DFA(FA):
             
         return current_state.is_final
     
-    def _find_state_by_name(self, name: str) -> State:
-        for state in self.states:
-            if state.name == name:
-                return state
-        raise ValueError(f"Estado '{name}' não encontrado.")
+    
+    def getDestinationStateFromTransition(self, source_state : Union[State, str], symbol : str) -> State:
+        source_state_obj = source_state
+        if isinstance(source_state, str):
+            source_state_obj = self._find_state_by_name(source_state)
+        for transition in self.transitions:
+            if transition.source_state == source_state_obj and transition.input_symbol == symbol:
+                return transition.target_state
+        return None

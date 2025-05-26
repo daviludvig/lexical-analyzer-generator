@@ -1,8 +1,8 @@
 import model.dfa as dfa
 import model.fa as fa
 
-def main():
-    
+def build_dfa() -> dfa.DFA:
+
     alphabet : fa.Set[str] = {"a", "b"}
     
     q0 : fa.State = fa.State(name='q0', is_initial=True, is_final=False)
@@ -17,14 +17,20 @@ def main():
     det_fa.addStates({q0,q1,q2})
     det_fa.addTransitions({t1,t2,t3})
     
+    return det_fa
+
+def main():
+    
+    det_fa : dfa.DFA = build_dfa()
     print(det_fa)
     
     input_example : str = "abaaaaaa"
-    
-    
     print(f"Is input '{input_example}' valid: {det_fa.isValidInput(input_example)}")
-    
     print("\n" + det_fa.getTabularFormat())
+
+    #print(det_fa._cloneWithPrefix("copy_"))
+    
+    #print(det_fa.getDestinationStateFromTransition("q0", "b"))
 
 if __name__ == "__main__":
     main()

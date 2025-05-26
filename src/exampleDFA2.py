@@ -1,7 +1,7 @@
 import model.dfa as dfa
 import model.fa as fa
 
-def main():
+def build_dfa() -> dfa.DFA:
     
     alphabet : fa.Set[str] = {"a", "b"}
     
@@ -22,15 +22,18 @@ def main():
     det_fa : dfa.DFA = dfa.DFA(alphabet=alphabet)
     det_fa.addStates({q0,q1,q2,q3})
     det_fa.addTransitions({t1,t2,t3,t4,t5,t6,t7,t8})
+
+    return det_fa
+
+def main():
     
+    det_fa : dfa.DFA = build_dfa()
     print(det_fa)
     
     input_example : str = "abaabbba"
-    
-    
     print(f"Is input '{input_example}' valid: {det_fa.isValidInput(input_example)}")
-    
     print("\n" + det_fa.getTabularFormat())
+
 
 if __name__ == "__main__":
     main()
