@@ -7,7 +7,7 @@ class NFA(FA):
         super().__init__(alphabet)
         self.epsilon = "&"
 
-    #Calcula o fecho-epsilon de um conjunto de estados
+    # Calcula o fecho-epsilon de um conjunto de estados
     def epsilon_closure(self, states: Set[State]) -> Set[State]:
         
         closure = set(states)
@@ -57,3 +57,30 @@ class NFA(FA):
             source_state_obj = self._find_state_by_name(source_state)
         return {t.target_state for t in self.transitions
             if t.source_state == source_state_obj and t.input_symbol == symbol}
+    
+    def deltaHat(self, states: Union[State, Set[State]], symbol: str) -> Set[State]:
+        """
+        Calcula o conjunto de estados alcançáveis a partir de um estado ou conjunto de estados,
+        ao consumir um único símbolo do alfabeto, considerando transições-ε antes e depois.
+        """
+        if symbol not in self.alphabet:
+            raise ValueError(f"Símbolo inválido: {symbol}")
+        
+        # Garante que 'states' seja um conjunto
+        if isinstance(states, State):
+            states = {states}
+
+        # Aplica o fecho-epsilon inicial
+        current_states = self.epsilon_closure(states)
+
+        # Realiza as transições pelo símbolo
+        next_states = set()
+        for st in current_states:
+            destinations = self.getDestinationStatesFromTransition(st, symbol)
+            next_states.update(destinations)
+
+        # Aplica o fecho-epsilon final
+        result_states = self.epsilon_closure(next_states)
+
+        return result_states
+
