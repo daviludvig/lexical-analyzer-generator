@@ -28,7 +28,13 @@ pip install -r requirements.txt
 
 4. Run the main script
 ```bash
-python src/main.py
+python src/main.py <prefix>
 ```
+
+- `<prefix>` is the prefix of the matching regular expressions and source text defined in the `inputs` folder.
+    - For example, if you want to use the regular expressions and source text defined in `inputs/main_regex.txt` and `inputs/main_source.txt`, you should run:
+    ```bash
+    python src/main.py main
+    ```
 
 The default input file is `inputs/main.txt`. You can change it with `-in {file}` flag.

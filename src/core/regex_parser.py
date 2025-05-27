@@ -1,4 +1,6 @@
-import re
+from . import utils
+
+SEPARATOR = ':=='
 
 class RegexToken:
     CHAR = 'CHAR'
@@ -95,3 +97,27 @@ def insert_concatenation(tokens: list[RegexToken]) -> list[RegexToken]:
             if is_operand(t1) and is_prefix(t2):
                 result.append(RegexToken(RegexToken.CONCAT))
     return result
+
+def get_regex_from_file(file_path: str) -> list[RegexToken]:
+    """
+    Lê expressões regulares de um arquivo no formato:
+    TOKEN:== REGEX
+    e retorna uma lista de tuplas: (TOKEN, REGEX)
+    """
+    lines = utils.get_file_lines(file_path)
+    regex_list = []
+    
+    if not lines:
+        raise ValueError(f"O arquivo {file_path} está vazio ou não contém uma regex válida.")
+    
+    for line in lines:
+        if SEPARATOR not in line:
+            raise ValueError(f"Linha mal formatada: {line}")
+        categoria, regex = map(str.strip, line.split(SEPARATOR, 1))
+        regex_list.append((categoria, regex))
+        
+    for i, (categoria, regex) in enumerate(regex_list):
+        tokens = tokenize_regex(regex)
+        tokens_with_concat = insert_concatenation(tokens)
+        regex_list[i] = (categoria, tokens_with_concat)
+    return regex_list
