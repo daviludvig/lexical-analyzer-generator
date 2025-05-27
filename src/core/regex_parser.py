@@ -98,7 +98,7 @@ def insert_concatenation(tokens: list[RegexToken]) -> list[RegexToken]:
                 result.append(RegexToken(RegexToken.CONCAT))
     return result
 
-def get_regex_from_file(file_path: str) -> list[RegexToken]:
+def get_regex_from_file(file_path: str) -> list[tuple[str, list[RegexToken]]]:
     """
     Lê expressões regulares de um arquivo no formato:
     TOKEN:== REGEX
