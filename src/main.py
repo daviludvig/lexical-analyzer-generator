@@ -3,7 +3,7 @@ import core.regex_parser as regex_parser
 import core.utils as utils
 
 def main() -> None:
-    if len(sys.argv) < 3 or len(sys.argv) > 3:
+    if len(sys.argv) != 3:
         print("Uso: python script.py <regex_file> <source_file>")
         sys.exit(1)
         
