@@ -4,7 +4,7 @@ import core.utils as utils
 
 def main() -> None:
     if len(sys.argv) != 3:
-        print("Uso: python script.py <regex_file> <source_file>")
+        print("Uso: python src/main.py <regex_file> <source_file>")
         sys.exit(1)
         
     regex_file = sys.argv[1]
