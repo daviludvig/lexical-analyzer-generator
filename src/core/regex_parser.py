@@ -102,7 +102,7 @@ def get_regex_from_file(file_path: str) -> list[tuple[str, list[RegexToken]]]:
     """
     Lê expressões regulares de um arquivo no formato:
     TOKEN:== REGEX
-    e retorna uma lista de tuplas: (TOKEN, REGEX)
+    e retorna uma lista de tuplas: TOKEN, list[RegexToken]
     """
     lines = utils.get_file_lines(file_path)
     regex_list = []

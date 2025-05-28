@@ -14,7 +14,9 @@ def main() -> None:
         print(f"Arquivo de entrada ou regex não encontrado: {source_file} ou {regex_file}")
         sys.exit(1)
     
-    print(regex_parser.get_regex_from_file(regex_file))
+    tokens = regex_parser.get_regex_from_file(regex_file)
+    formatted_tokens = "\n".join(f"{str(token)}\n" for token in tokens)
+    print("Parsed Regex Tokens:\n" + formatted_tokens)
     
     
 if __name__ == "__main__":
