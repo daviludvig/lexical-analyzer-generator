@@ -1,11 +1,8 @@
 # Code based on: https://viterbi-web.usc.edu/~breichar/teaching/2011cs360/NFAtoDFA.py
 # Adapted by: Bruno, Davi, Julia Gazolla
-
-from concurrent.futures import ThreadPoolExecutor
 import model.fa as fa
 import model.dfa as dfa
 import model.nfa as nfa
-from functools import reduce  # necessário para usar reduce
 
 def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     """Converts the input NFA into a DFA.  
@@ -53,11 +50,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
         
         # Retira um conj de estados dos que não foram marcados e processa
         qSet = unprocessedQ.pop()
-        
-        if len(Q) % 100 == 0:
-            print(f"Processed {len(Q)} subsets...")
-
-
 
         # Transições daquele estado vazias
         delta[qSet] = {}
@@ -71,7 +63,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
                    moveResult |= cached_deltaHat(q, a)
                 except KeyError:
                     pass
-                
             if moveResult:
                 nextStates = frozenset(cached_epsilon_closure(moveResult))
             else:
@@ -99,7 +90,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     final_DFA = dfa.DFA(DFA_alphabet)
     DFA_states = set()
     DFA_transitions = set()
-    states_list = list()
     subset_to_state = {}
     i = 0
     # Cria objetos estado da DFA
@@ -112,7 +102,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
             qi = fa.State(name='q' + str(i), is_initial=is_initial, is_final=is_final)
 
             DFA_states.add(qi)
-            # states_list.append((qi,subset))
             subset_to_state[subset] = qi
             i+=1
 
@@ -128,7 +117,7 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
             source_state = subset_to_state[subset]
             target_state = subset_to_state[next_subset]
 
-            ti = fa.Transition(source_state=source_state, input_symbol=s, target_state=target_state)
+            ti: fa.Transition = fa.Transition(source_state=source_state, input_symbol=s, target_state=target_state)
             DFA_transitions.add(ti)
 
     
