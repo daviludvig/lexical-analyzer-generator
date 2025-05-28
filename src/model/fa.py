@@ -35,10 +35,9 @@ class Transition:
     def __repr__(self) -> str:
         return f"Transition(from '{self.source_state.name}' by '{self.input_symbol}' for '{self.target_state.name}')"
 
-    def __repr__(self):
-        return f"Transition(from '{self.source_state.name}' by '{self.input_symbol}' to '{self.target_state.name}')"
-
     def __eq__(self, other):
+        if not isinstance(other, Transition):
+            return False
         return (self.source_state == other.source_state and
                 self.input_symbol == other.input_symbol and
                 self.target_state == other.target_state)
