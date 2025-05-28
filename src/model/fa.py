@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Set, Dict, Optional
+from typing import Set, Dict, Optional, DefaultDict
+from collections import defaultdict
 
 class State:
     def __init__(self, name: str, is_initial: bool = False, is_final: bool = False) -> None:
@@ -17,6 +18,14 @@ class State:
         """Adiciona uma transição à lista de transições do estado."""
         self.transitions.add(transition)
         
+    def __eq__(self, other):
+        if not isinstance(other, State):
+            return False
+        return self.name == other.name
+
+    def __hash__(self):
+        return hash(self.name)
+        
 class Transition:
     def __init__(self, source_state : State = None, input_symbol: str = None, target_state : State = None):
         self.source_state : State = source_state
@@ -26,6 +35,17 @@ class Transition:
     def __repr__(self) -> str:
         return f"Transition(from '{self.source_state.name}' by '{self.input_symbol}' for '{self.target_state.name}')"
 
+    def __repr__(self):
+        return f"Transition(from '{self.source_state.name}' by '{self.input_symbol}' to '{self.target_state.name}')"
+
+    def __eq__(self, other):
+        return (self.source_state == other.source_state and
+                self.input_symbol == other.input_symbol and
+                self.target_state == other.target_state)
+
+    def __hash__(self):
+        return hash((self.source_state, self.input_symbol, self.target_state))
+
 class FA(ABC):
     def __init__(self, alphabet : Set[str]) -> None:
         self.states: Set[State] = set()
@@ -33,6 +53,10 @@ class FA(ABC):
         self.final_states: Set[State] = set()
         self.initial_state: State = None
         self.transitions: Set[Transition] = set()
+        
+        # Index de transições: {source_state: {symbol: set(target_states)}}
+        self._transition_map: DefaultDict[State, DefaultDict[str, Set[State]]] = defaultdict(lambda: defaultdict(set))
+
 
     def addTransitions(self, transitions : Set[Transition]) -> None:
         for transition in transitions:
@@ -41,6 +65,9 @@ class FA(ABC):
     def addTransition(self, transition : Transition) -> None:
         self.transitions.add(transition)
         transition.source_state.addTransition(transition)
+        # Atualiza índice
+        self._transition_map[transition.source_state][transition.input_symbol].add(transition.target_state)
+
         
     def addStates(self, states: Set[State]) -> None:
         for state in states:

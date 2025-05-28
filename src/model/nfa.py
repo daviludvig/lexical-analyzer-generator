@@ -51,12 +51,13 @@ class NFA(FA):
             
         return any(state.is_final for state in current_states)
     
-    def getDestinationStatesFromTransition(self, source_state : Union[State, str], symbol : str) -> Set[State]:
+    def getDestinationStatesFromTransition(self, source_state: Union[State, str], symbol: str) -> Set[State]:
         source_state_obj = source_state
         if isinstance(source_state, str):
             source_state_obj = self._find_state_by_name(source_state)
-        return {t.target_state for t in self.transitions
-            if t.source_state == source_state_obj and t.input_symbol == symbol}
+        # Usa índice com lookup O(1)
+        return self._transition_map.get(source_state_obj, {}).get(symbol, set())
+
     
     def deltaHat(self, states: Union[State, Set[State]], symbol: str) -> Set[State]:
         """
