@@ -86,15 +86,14 @@ def insert_concatenation(tokens: list[RegexToken]) -> list[RegexToken]:
     for i in range(len(tokens)):
         result.append(tokens[i])
         if i + 1 < len(tokens):
-            t1, t2 = tokens[i], tokens[i+1]
+            curr_type = tokens[i].type
+            next_type = tokens[i + 1].type
 
-            def is_operand(t):
-                return t.type in {RegexToken.CHAR, RegexToken.RPAREN}
-
-            def is_prefix(t):
-                return t.type in {RegexToken.CHAR, RegexToken.LPAREN}
-
-            if is_operand(t1) and is_prefix(t2):
+            # Insere CONCAT se
+            # o token atual é CHAR, ), *, + ou ?
+            # o próximo token é CHAR ou (
+            if (curr_type in {RegexToken.CHAR, RegexToken.RPAREN, RegexToken.STAR, RegexToken.PLUS, RegexToken.QUESTION} and
+                next_type in {RegexToken.CHAR, RegexToken.LPAREN}):
                 result.append(RegexToken(RegexToken.CONCAT))
     return result
 
