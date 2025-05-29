@@ -1,11 +1,8 @@
 # Code based on: https://viterbi-web.usc.edu/~breichar/teaching/2011cs360/NFAtoDFA.py
 # Adapted by: Bruno, Davi, Julia Gazolla
-
-
 import model.fa as fa
 import model.dfa as dfa
 import model.nfa as nfa
-from functools import reduce  # necessário para usar reduce
 
 def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     """Converts the input NFA into a DFA.  
@@ -17,8 +14,25 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     # Cria o DFA com alfabeto sem &
     # afd = dfa.AFD(nfa.alphabet.discart("&"))
 
+    epsilon_cache = {}
+
+    def cached_epsilon_closure(states):
+        key = frozenset(states)
+        if key not in epsilon_cache:
+            epsilon_cache[key] = nfa.epsilon_closure(states)
+        return epsilon_cache[key]
+    
+    deltaHat_cache = {}
+
+    def cached_deltaHat(q, a):
+        key = (q, a)
+        if key not in deltaHat_cache:
+            deltaHat_cache[key] = nfa.deltaHat(q, a)
+        return deltaHat_cache[key]
+
+
     # Cria um frozenset do e-fecho de estado inicial para poder usar como chave em dicionários
-    qo_closure = nfa.epsilon_closure([nfa.initial_state])
+    qo_closure = cached_epsilon_closure([nfa.initial_state])
     q0 = frozenset(qo_closure)  # frozensets are hashable, so can key the delta dictionary
 
     Q = set([q0])
@@ -30,6 +44,7 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     # Estados finais
     F = []
 
+    DFA_alphabet = nfa.alphabet - {"&"}
     # Enquanto os estados não forem marcados
     while unprocessedQ: 
         
@@ -41,19 +56,23 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
 
         # Para cada elemento do alfabeto do NFA
       
-        for a in nfa.alphabet:
-            if a != "&":
-                moveResult = set()
-                for q in qSet:
-                    try:
-                        moveResult |= nfa.deltaHat(q,a)
-                    except KeyError:
-                        pass
-                nextStates = frozenset(nfa.epsilon_closure(moveResult))
-                delta[qSet][a] = nextStates
-                if nextStates not in Q:
-                    Q.add(nextStates)
-                    unprocessedQ.add(nextStates)
+        for a in DFA_alphabet:
+            moveResult = set()
+            for q in qSet:
+                try:
+                   moveResult |= cached_deltaHat(q, a)
+                except KeyError:
+                    pass
+            if moveResult:
+                nextStates = frozenset(cached_epsilon_closure(moveResult))
+            else:
+                nextStates = frozenset()
+
+            
+            delta[qSet][a] = nextStates
+            if nextStates and nextStates not in Q:
+                Q.add(nextStates)
+                unprocessedQ.add(nextStates)
 
     for qSet in Q: 
         # Verifica se o estado final da NFA está naquele novo estado
@@ -71,7 +90,7 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     final_DFA = dfa.DFA(DFA_alphabet)
     DFA_states = set()
     DFA_transitions = set()
-    states_list = list()
+    subset_to_state = {}
     i = 0
     # Cria objetos estado da DFA
     for j, subset in enumerate(Q):
@@ -83,7 +102,7 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
             qi = fa.State(name='q' + str(i), is_initial=is_initial, is_final=is_final)
 
             DFA_states.add(qi)
-            states_list.append((qi,subset))
+            subset_to_state[subset] = qi
             i+=1
 
     #Transições DFA - precisa mapear Delta
@@ -91,24 +110,14 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     for subset in Q:
 
         for s in DFA_alphabet:
-            # Se aquele conjunto é vazio, passa para o proximo
-            if (subset) == frozenset():
-                continue
-            # Se a transição leva para um vazio, passa para o proximo
-            if delta[subset][s] == frozenset():
+            next_subset = delta[subset][s]
+            if next_subset == frozenset():
                 continue
 
-            # Para cada tupla na lista
-            for state_tuple in states_list:
-                
-                if subset in state_tuple:
-                    source_state = state_tuple[0]
-                if delta[subset][s] in state_tuple:
-                    target_state = state_tuple[0]
-            
+            source_state = subset_to_state[subset]
+            target_state = subset_to_state[next_subset]
 
-
-            ti : fa.Transition = fa.Transition(source_state=source_state, input_symbol=s, target_state=target_state)
+            ti: fa.Transition = fa.Transition(source_state=source_state, input_symbol=s, target_state=target_state)
             DFA_transitions.add(ti)
 
     
