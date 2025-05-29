@@ -32,3 +32,9 @@ python src/main.py
 ```
 
 The default input file is `inputs/main.txt`. You can change it with `-in {file}` flag.
+
+## Development info
+Benchmark time
+```bash
+python -m cProfile -s time script.py
+```
