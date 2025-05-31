@@ -47,12 +47,14 @@ class Transition:
         return hash((self.source_state, self.input_symbol, self.target_state))
 
 class FA(ABC):
-    def __init__(self, alphabet : Set[str]) -> None:
-        self.states: Set[State] = set()                # Conjunto de estados do autômato
-        self.alphabet: Set[str] = alphabet             # Conjunto alfabeto do autômato
-        self.final_states: Set[State] = set()          # Conjunto de estados finais do autômato
-        self.initial_state: State = None               # Estado inicial do autômato
-        self.transitions: Set[Transition] = set()      # Conjunto de transições do autômato
+
+    def __init__(self, alphabet : Set[str], name = None) -> None:
+        self.states: Set[State] = set()
+        self.alphabet: Set[str] = alphabet
+        self.final_states: Set[State] = set()
+        self.initial_state: State = None
+        self.transitions: Set[Transition] = set()
+        self.name: str = name
         
         # Index de transições: {source_state: {symbol: set(target_states)}}
         self._transition_map: DefaultDict[State, DefaultDict[str, Set[State]]] = defaultdict(lambda: defaultdict(set))

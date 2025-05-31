@@ -1,24 +1,8 @@
+from __future__ import annotations
 from . import utils
+from model.symbol_table import TokenType, RegexToken
 
 SEPARATOR = ':=='
-
-class RegexToken:
-    CHAR = 'CHAR'
-    STAR = '*'
-    PLUS = '+'
-    QUESTION = '?'
-    OR = '|'
-    LPAREN = '('
-    RPAREN = ')'
-    CONCAT = '.'  # Caso especial: inseriremos este operador mesmo que não apareça explicitamente na regex
-    CHAR_CLASS = 'CLASS'
-
-    def __init__(self, type_, value=None):
-        self.type = type_
-        self.value = value
-
-    def __repr__(self):
-        return f"{self.type}({self.value})" if self.value else self.type
 
 # Expandir uma representação condensada de caracteres
 def expand_char_class(char_class: str) -> list:
@@ -97,7 +81,7 @@ def insert_concatenation(tokens: list[RegexToken]) -> list[RegexToken]:
                 result.append(RegexToken(RegexToken.CONCAT))
     return result
 
-def get_regex_from_file(file_path: str) -> list[tuple[str, list[RegexToken]]]:
+def get_regex_from_file(file_path: str) -> list[TokenType]:
     """
     Lê expressões regulares de um arquivo no formato:
     TOKEN:== REGEX
@@ -105,6 +89,7 @@ def get_regex_from_file(file_path: str) -> list[tuple[str, list[RegexToken]]]:
     """
     lines = utils.get_file_lines(file_path)
     regex_list = []
+    tokentype_list = []
     
     if not lines:
         raise ValueError(f"O arquivo {file_path} está vazio ou não contém uma regex válida.")
@@ -118,5 +103,6 @@ def get_regex_from_file(file_path: str) -> list[tuple[str, list[RegexToken]]]:
     for i, (categoria, regex) in enumerate(regex_list):
         tokens = tokenize_regex(regex)
         tokens_with_concat = insert_concatenation(tokens)
-        regex_list[i] = (categoria, tokens_with_concat)
-    return regex_list
+        tokentype = TokenType(name=categoria, regex=tokens_with_concat, dfa=None)  # DFA será construído posteriormente
+        tokentype_list.append(tokentype)
+    return tokentype_list
