@@ -1,7 +1,51 @@
+from __future__ import annotations
 from .dfa import DFA
-from core.regex_parser import TokenType
-from typing import List, Dict
+from typing import List, Dict, Union
+
+
+class Token:
+    def __init__(self, lexeme: Lexeme = None, tokentype: Union[TokenType,str] = None):
+        self.lexeme = lexeme
+        self.tokentype = tokentype
+
+class TokenType:
+    def __init__(self, name: str, regex: List[RegexToken], dfa: DFA = None):
+        self.name = name
+        self.regex = regex
+        self.dfa = dfa
+        
+    def __repr__(self):
+        regex_str = "".join(str(tok) for tok in self.regex)
+        return f"<TokenType(name='{self.name}', regex='{regex_str}')>"
     
+    def __str__(self):
+        regex_str = "".join(str(tok) for tok in self.regex)
+        dfa_str = f"DFA states: {len(self.dfa.states)}" if self.dfa else "No DFA"
+        return (
+            f"TokenType:\n"
+            f"  Name  : {self.name}\n"
+            f"  Regex : {regex_str}\n"
+            f"  {dfa_str}"
+        )
+
+class RegexToken:
+    CHAR = 'CHAR'
+    STAR = '*'
+    PLUS = '+'
+    QUESTION = '?'
+    OR = '|'
+    LPAREN = '('
+    RPAREN = ')'
+    CONCAT = '.'  # Caso especial: inseriremos este operador mesmo que não apareça explicitamente na regex
+    CHAR_CLASS = 'CLASS'
+
+    def __init__(self, type_, value=None):
+        self.type = type_
+        self.value = value
+
+    def __repr__(self):
+        return f"{self.type}({self.value})" if self.value else self.type
+
 class Lexeme:
     def __init__(self):
         self.lexeme : str = ""
@@ -26,7 +70,12 @@ class Lexeme:
 
     def increase(self, char: str) -> None:
         """Adiciona um caractere ao lexema"""
-        self.lexeme += char    
+        self.lexeme += char   
+    
+    def decrease(self) -> None:
+        """Remove o último caractere do lexema"""
+        if self.lexeme:
+            self.lexeme = self.lexeme[:-1] 
 
 
 class SymbolTable:

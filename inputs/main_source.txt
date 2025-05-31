@@ -1,4 +1,4 @@
 beg main;
-func menos -> x -> y;
+func _menos -> x -> y;
   ret x - y;
 end;

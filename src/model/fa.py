@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Set, Dict, Optional, DefaultDict
+from typing import Set, Dict, DefaultDict
 from collections import defaultdict
 
 class State:
@@ -46,12 +46,13 @@ class Transition:
         return hash((self.source_state, self.input_symbol, self.target_state))
 
 class FA(ABC):
-    def __init__(self, alphabet : Set[str]) -> None:
+    def __init__(self, alphabet : Set[str], name = None) -> None:
         self.states: Set[State] = set()
         self.alphabet: Set[str] = alphabet
         self.final_states: Set[State] = set()
         self.initial_state: State = None
         self.transitions: Set[Transition] = set()
+        self.name: str = name
         
         # Index de transições: {source_state: {symbol: set(target_states)}}
         self._transition_map: DefaultDict[State, DefaultDict[str, Set[State]]] = defaultdict(lambda: defaultdict(set))

@@ -1,8 +1,7 @@
 from core.regex_parser import RegexToken
 from model.nfa import NFA
 from model.fa import State, Transition
-from typing import List, Set
-import string
+from typing import List
 import itertools
 
 class NFAFromRegex:

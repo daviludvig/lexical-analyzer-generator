@@ -12,7 +12,7 @@ class DFA(FA):
         current_state = self.initial_state
         for symbol in input_str:
             if symbol not in self.alphabet:
-                raise ValueError(f"Símbolo inválido: {symbol}")
+                return False  # Anteriormente lançava erro
 
             found = False
             for transition in current_state.transitions:
