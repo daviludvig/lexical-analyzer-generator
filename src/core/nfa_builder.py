@@ -65,11 +65,15 @@ class NFAFromRegex:
         epsilon = '&'
         result = NFA(nfa.alphabet.copy())
 
+        # Cria novos estados inicial e final
         start = self.new_state(is_initial=True)
         end = self.new_state(is_final=True)
-
         result.addStates({start, end})
+
+        # Desabilita estado inicial do autômato original
         nfa._disableInitialState()
+
+        # Adiciona ao novo autômato todos os estados e transições do autômato original
         for state in nfa.states:
             result.addState(state)
         for t in nfa.transitions:
@@ -94,18 +98,20 @@ class NFAFromRegex:
         epsilon = '&'
         result = NFA(a.alphabet.union(b.alphabet))
 
+        # Cria novos estados inicial e final
         start = self.new_state(is_initial=True)
         end = self.new_state(is_final=True)
-
         result.addStates({start, end})
+
+        # Desabilita estados iniciais dos autômatos originais
         a._disableInitialState()
         b._disableInitialState()
 
-        for nfa in [a, b]:
-            for state in nfa.states:
-                result.addState(state)
-            for t in nfa.transitions:
-                result.addTransition(t)
+        # Adiciona ao novo autômato todos os estados e transições dos autômatos originais
+        for state in a.states.union(b.states):
+            result.addState(state)
+        for t in a.transitions.union(b.transitions):
+            result.addTransition(t)
 
         # Adiciona epsilon-transições do novo estado inicial para os dois antigos
         result.addTransition(Transition(start, epsilon, a.initial_state))
@@ -125,14 +131,17 @@ class NFAFromRegex:
         epsilon = '&'
         result = NFA(a.alphabet.union(b.alphabet))
 
+        # Desabilita estados iniciais dos autômatos originais
         a._disableInitialState()
         b._disableInitialState()
 
+        # Adiciona ao novo autômato todos os estados e transições dos autômatos originais
         for state in a.states.union(b.states):
             result.addState(state)
         for t in a.transitions.union(b.transitions):
             result.addTransition(t)
 
+        # O estado inicial do novo autômato é o estado inicial do primeiro elemento da concatenação
         result.initial_state = a.initial_state
 
         # Adiciona uma epsilon-transição de cada estado final do primeiro autômato para o estado inicial do segundo
@@ -140,7 +149,7 @@ class NFAFromRegex:
             f.is_final = False
             result.addTransition(Transition(f, epsilon, b.initial_state))
 
-        # Novo estado final é o estado final do segundo
+        # O estado final do novo autômato é o estado final do segundo elemento da concatenação
         result.final_states = set()
         for f in b.final_states:
             f.is_final = True
@@ -153,11 +162,15 @@ class NFAFromRegex:
         epsilon = '&'
         result = NFA(nfa.alphabet.copy())
 
+        # Cria novos estados inicial e final
         start = self.new_state(is_initial=True)
         end = self.new_state(is_final=True)
-
         result.addStates({start, end})
+
+        # Desabilita estado inicial do autômato original
         nfa._disableInitialState()
+
+        # Adiciona ao novo autômato todos os estados e transições do autômato original
         for state in nfa.states:
             result.addState(state)
         for t in nfa.transitions:
