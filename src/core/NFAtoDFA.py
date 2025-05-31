@@ -51,10 +51,10 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
         # Retira um subconjunto de estados dos que não foram marcados e processa suas transições
         qSet = unprocessedQ.pop()
 
-        # Transições daquele estado vazias
+        # Transições do subconjunto de estados
         delta[qSet] = {}
 
-        # Para símbolo do alfabeto do autômato determinístico
+        # Para símbolo do alfabeto do autômato determinístico, verifica as transições
         for a in DFA_alphabet:
             moveResult = set()
 
@@ -68,7 +68,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
                 nextStates = frozenset(cached_epsilon_closure(moveResult))
             else:
                 nextStates = frozenset()
-
             
             delta[qSet][a] = nextStates
             if nextStates and nextStates not in Q:
@@ -80,18 +79,14 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
         if (qSet & nfa.final_states): 
             F.append(qSet)
 
-	# Aqui vou ter: 
-	# Q - set de todos os estados, com diversos frozensets, que são combinação de estados da NFA
-    # F - set de todos estados finais
-    # delta [estado] [simbolo do alfabeto]
-
-    
+    # Inicializa elementos do novo autômato determinístico
     final_DFA = dfa.DFA(DFA_alphabet)
     DFA_states = set()
     DFA_transitions = set()
     subset_to_state = {}
     i = 0
-    # Cria objetos estado da DFA
+
+    # Cria objetos estado do autômato determinístico
     for j, subset in enumerate(Q):
 
         is_initial = (subset == q0)
@@ -99,13 +94,11 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
 
         if len(subset) > 0:
             qi = fa.State(name='q' + str(i), is_initial=is_initial, is_final=is_final)
-
             DFA_states.add(qi)
             subset_to_state[subset] = qi
             i+=1
 
-    #Transições DFA - precisa mapear Delta
-    # Set -> ordem não é garantida
+    # Cria objetos transições do autômato determinístico
     for subset in Q:
 
         for s in DFA_alphabet:
@@ -115,13 +108,11 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
 
             source_state = subset_to_state[subset]
             target_state = subset_to_state[next_subset]
-
             ti: fa.Transition = fa.Transition(source_state=source_state, input_symbol=s, target_state=target_state)
             DFA_transitions.add(ti)
 
-    
+    # Adiciona os objetos para o autômato determinístico
     final_DFA.addStates(DFA_states)
     final_DFA.addTransitions(DFA_transitions)
-
 
     return final_DFA
