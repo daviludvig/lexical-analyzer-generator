@@ -1,47 +1,8 @@
 from __future__ import annotations
-from typing import List
 from . import utils
-from model.dfa import DFA
+from model.symbol_table import TokenType, RegexToken
 
 SEPARATOR = ':=='
-
-class TokenType:
-    def __init__(self, name: str, regex: List[RegexToken], dfa: DFA = None):
-        self.name = name
-        self.regex = regex
-        self.dfa = dfa
-        
-    def __repr__(self):
-        regex_str = "".join(str(tok) for tok in self.regex)
-        return f"<TokenType(name='{self.name}', regex='{regex_str}')>"
-    
-    def __str__(self):
-        regex_str = "".join(str(tok) for tok in self.regex)
-        dfa_str = f"DFA states: {len(self.dfa.states)}" if self.dfa else "No DFA"
-        return (
-            f"TokenType:\n"
-            f"  Name  : {self.name}\n"
-            f"  Regex : {regex_str}\n"
-            f"  {dfa_str}"
-        )
-
-class RegexToken:
-    CHAR = 'CHAR'
-    STAR = '*'
-    PLUS = '+'
-    QUESTION = '?'
-    OR = '|'
-    LPAREN = '('
-    RPAREN = ')'
-    CONCAT = '.'  # Caso especial: inseriremos este operador mesmo que não apareça explicitamente na regex
-    CHAR_CLASS = 'CLASS'
-
-    def __init__(self, type_, value=None):
-        self.type = type_
-        self.value = value
-
-    def __repr__(self):
-        return f"{self.type}({self.value})" if self.value else self.type
 
 # Expandir uma representação condensada de caracteres
 def expand_char_class(char_class: str) -> list:
