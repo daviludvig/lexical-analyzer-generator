@@ -65,7 +65,7 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
         # Transições do subconjunto de estados
         delta[qSet] = {}
 
-        # Para símbolo do alfabeto do autômato determinístico
+        # Para símbolo do alfabeto do autômato determinístico, verifica as transições
         for a in DFA_alphabet:
             moveResult = set()
 
@@ -92,12 +92,7 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
         if (qSet & nfa.final_states): 
             F.append(qSet)
 
-	# Aqui vou ter: 
-	# Q - set de todos os estados, com diversos frozensets, que são combinação de estados da NFA
-    # F - set de todos estados finais
-    # delta [estado] [simbolo do alfabeto]
-
-    
+    # Inicializa elementos do novo autômato determinístico
     final_DFA = dfa.DFA(DFA_alphabet)
     DFA_states = set()
     DFA_transitions = set()
