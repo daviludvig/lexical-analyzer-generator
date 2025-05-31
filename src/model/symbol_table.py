@@ -26,7 +26,12 @@ class Lexeme:
 
     def increase(self, char: str) -> None:
         """Adiciona um caractere ao lexema"""
-        self.lexeme += char    
+        self.lexeme += char   
+    
+    def decrease(self) -> None:
+        """Remove o último caractere do lexema"""
+        if self.lexeme:
+            self.lexeme = self.lexeme[:-1] 
 
 
 class SymbolTable:
