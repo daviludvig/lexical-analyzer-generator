@@ -44,6 +44,7 @@ def get_tokens(source_code : str, dfas : List[DFA]) -> List[Tuple[str, str]]:
                 while ((source_code[i] != " ") and (source_code[i] != "\n")):
                     i += 1
                     lexeme_obj.increase(source_code[i])
+                lexeme_obj.decrease()
                 curr_token.lexeme = lexeme_obj.get()
                 curr_token.tokentype = "ERRO"
                 tokens.append(curr_token)
