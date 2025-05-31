@@ -7,7 +7,7 @@ class NFA(FA):
         super().__init__(alphabet)
         self.epsilon = "&"
 
-    # Calcula o fecho-epsilon de um conjunto de estados
+    # Calcula o e-fecho de um conjunto de estados
     def epsilon_closure(self, states: Set[State]) -> Set[State]:
         
         closure = set(states)
@@ -21,36 +21,44 @@ class NFA(FA):
                     stack.append(transition.target_state)
         return closure
 
+    # Verifica se uma entrada é válida nesse autômato não determinístico
     def isValidInput(self, input_str: str) -> bool:
         if self.initial_state is None:
             raise ValueError("Estado inicial não definido.")
 
-        # Começa com o fecho-epsilon do estado inicial
+        # Começa com o e-fecho do estado inicial
         current_states = self.epsilon_closure({self.initial_state})
 
+        # Para cada símbolo da entrada
         for symbol in input_str:
+
+            # Verifica se o símbolo faz parte do alfabeto 
             if symbol not in self.alphabet:
                 raise ValueError(f"Símbolo inválido: {symbol}")
 
             found = False
             next_states = set()
+
+            # Para cada estado do e-fecho
             for state in current_states:
                 for transition in state.transitions:
+                    # Se existe uma transição pelo símbolo que está na entrada, adiciona aos próximos estados
                     if transition.input_symbol == symbol:
                         next_states.add(transition.target_state)
-                        # Aplica o fecho-epsilon nos estados alcançados
-            
+                        
+            # Aplica o e-fecho nos estados alcançados
             current_states = self.epsilon_closure(next_states)
             
             if next_states:
                 found = True
-                        
                 
             if not found:
                 return False
             
+        # Retorna verdadeiro se existir algum estado final no conjunto de próximos estados após percorrer todos síbolos da entrada
         return any(state.is_final for state in current_states)
     
+    # Obtém o estado destino a partir de um estado inicial e transição
     def getDestinationStatesFromTransition(self, source_state: Union[State, str], symbol: str) -> Set[State]:
         source_state_obj = source_state
         if isinstance(source_state, str):
@@ -71,7 +79,7 @@ class NFA(FA):
         if isinstance(states, State):
             states = {states}
 
-        # Aplica o fecho-epsilon inicial
+        # Aplica o e-fecho inicial
         current_states = self.epsilon_closure(states)
 
         # Realiza as transições pelo símbolo
@@ -80,7 +88,7 @@ class NFA(FA):
             destinations = self.getDestinationStatesFromTransition(st, symbol)
             next_states.update(destinations)
 
-        # Aplica o fecho-epsilon final
+        # Aplica o e-fecho final
         result_states = self.epsilon_closure(next_states)
 
         return result_states

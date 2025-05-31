@@ -13,7 +13,8 @@ class State:
         
     def __repr__(self) -> str:
         return f"State('{self.name}', initial={self.is_initial}, final={self.is_final})"
-        
+    
+    # Adiciona transições para esse estado
     def addTransition(self, transition : Transition) -> None:
         """Adiciona uma transição à lista de transições do estado."""
         self.transitions.add(transition)
@@ -28,8 +29,8 @@ class State:
         
 class Transition:
     def __init__(self, source_state : State = None, input_symbol: str = None, target_state : State = None):
-        self.source_state : State = source_state
-        self.input_symbol : str = input_symbol   # Símbolo da entrada que aciona a transição (por exemplo, 'a', '0', etc.)
+        self.source_state : State = source_state   # Estado de origem da transição
+        self.input_symbol : str = input_symbol     # Símbolo do alfabeto do autômato que aciona a transição (por exemplo, 'a', '0', etc.)
         self.target_state : State = target_state   # Estado de destino para o qual a transição leva
         
     def __repr__(self) -> str:
@@ -47,31 +48,33 @@ class Transition:
 
 class FA(ABC):
     def __init__(self, alphabet : Set[str]) -> None:
-        self.states: Set[State] = set()
-        self.alphabet: Set[str] = alphabet
-        self.final_states: Set[State] = set()
-        self.initial_state: State = None
-        self.transitions: Set[Transition] = set()
+        self.states: Set[State] = set()                # Conjunto de estados do autômato
+        self.alphabet: Set[str] = alphabet             # Conjunto alfabeto do autômato
+        self.final_states: Set[State] = set()          # Conjunto de estados finais do autômato
+        self.initial_state: State = None               # Estado inicial do autômato
+        self.transitions: Set[Transition] = set()      # Conjunto de transições do autômato
         
         # Index de transições: {source_state: {symbol: set(target_states)}}
         self._transition_map: DefaultDict[State, DefaultDict[str, Set[State]]] = defaultdict(lambda: defaultdict(set))
 
-
+    # Adiciona um conjunto de transições ao autômato
     def addTransitions(self, transitions : Set[Transition]) -> None:
         for transition in transitions:
             self.addTransition(transition)
 
+    # Adiciona uma transição ao autômato
     def addTransition(self, transition : Transition) -> None:
         self.transitions.add(transition)
         transition.source_state.addTransition(transition)
         # Atualiza índice
         self._transition_map[transition.source_state][transition.input_symbol].add(transition.target_state)
 
-        
+    # Adiciona um conjunto de estados ao autômato    
     def addStates(self, states: Set[State]) -> None:
         for state in states:
             self.addState(state)
         
+    # Adiciona um estado ao autômato    
     def addState(self, new_state: State) -> None:
         self.states.add(new_state)
         if new_state.is_initial:
@@ -109,7 +112,7 @@ class FA(ABC):
         output = []
         output.append(str(len(self.states)))  # Número de estados
         output.append(self.initial_state.name)  # Estado inicial
-        output.append(",".join(sorted(s.name for s in self.final_states)))  # Finais
+        output.append(",".join(sorted(s.name for s in self.final_states)))  # Estados finais
         output.append(",".join(sorted(self.alphabet)))  # Alfabeto
         
         for t in transitions:
@@ -117,6 +120,7 @@ class FA(ABC):
     
         return "\n".join(output)
 
+    # Copia um autômato existente, sendo que o novo autômato terá estados com um prefixo
     def _cloneWithPrefix(self, prefix : str) -> FA:
         new_fa = self.__class__(self.alphabet.copy())
 
@@ -145,7 +149,8 @@ class FA(ABC):
         """Desabilita o estado inicial do autômato."""
         if self.initial_state is not None:
             self.initial_state.is_initial = False
-            
+    
+    # Escontra estados do autômato pelo nome
     def _find_state_by_name(self, name: str) -> State:
         for state in self.states:
             if state.name == name:
