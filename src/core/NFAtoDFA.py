@@ -5,17 +5,13 @@ import model.dfa as dfa
 import model.nfa as nfa
 
 def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
-    """Converts the input NFA into a DFA.  
-
-    The output DFA has a state for every *reachable* subset of states in the input NFA.  
-    In the worst case, there will be an exponential increase in the number of states.
+    """ Converte um autômato não determinístico em autômato determinístico.   
+        O autômato de saída possui um estado para cada subconjunto de estados alcançável da entrada.
     """
-
-    # Cria o DFA com alfabeto sem &
-    # afd = dfa.AFD(nfa.alphabet.discart("&"))
 
     epsilon_cache = {}
 
+    # Função auxiliar para otimizar e-fecho
     def cached_epsilon_closure(states):
         key = frozenset(states)
         if key not in epsilon_cache:
@@ -24,6 +20,7 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     
     deltaHat_cache = {}
 
+    # Função auxiliar para otimizar deltaHat
     def cached_deltaHat(q, a):
         key = (q, a)
         if key not in deltaHat_cache:
@@ -33,10 +30,15 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
 
     # Cria um frozenset do e-fecho de estado inicial para poder usar como chave em dicionários
     qo_closure = cached_epsilon_closure([nfa.initial_state])
-    q0 = frozenset(qo_closure)  # frozensets are hashable, so can key the delta dictionary
+    q0 = frozenset(qo_closure)  
+    q0 = frozenset(qo_closure)  
 
+    # Conjunto de estados do novo autômato
     Q = set([q0])
-    unprocessedQ = Q.copy()  # unprocessedQ tracks states for which delta is not yet defined
+    # Conjunto de estados que ainda não foram processados quanto a transições
+    unprocessedQ = Q.copy() 
+    # Conjunto de estados que ainda não foram processados quanto a transições
+    unprocessedQ = Q.copy() 
 
     # Transições
     delta = {}
@@ -45,19 +47,22 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     F = []
 
     DFA_alphabet = nfa.alphabet - {"&"}
+
+
     # Enquanto os estados não forem marcados
     while unprocessedQ: 
-        
-        # Retira um conj de estados dos que não foram marcados e processa
+
+        # Retira um subconjunto de estados dos que não foram marcados e processa suas transições
         qSet = unprocessedQ.pop()
 
-        # Transições daquele estado vazias
+        # Transições do subconjunto de estados
         delta[qSet] = {}
 
-        # Para cada elemento do alfabeto do NFA
-      
+        # Para símbolo do alfabeto do autômato determinístico, verifica as transições
         for a in DFA_alphabet:
             moveResult = set()
+
+            # Para cada estado do subconjunto
             for q in qSet:
                 try:
                    moveResult |= cached_deltaHat(q, a)
@@ -67,7 +72,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
                 nextStates = frozenset(cached_epsilon_closure(moveResult))
             else:
                 nextStates = frozenset()
-
             
             delta[qSet][a] = nextStates
             if nextStates and nextStates not in Q:
@@ -79,20 +83,14 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
         if (qSet & nfa.final_states): 
             F.append(qSet)
 
-	# Aqui vou ter: 
-	# Q - set de todos os estados, com diversos frozensets, que são combinação de estados da NFA
-    # F - set de todos estados finais
-    # delta [estado] [simbolo do alfabeto]
-
-    #Cria DFA
-    DFA_alphabet = nfa.alphabet - {"&"}
-    
+    # Inicializa elementos do novo autômato determinístico
     final_DFA = dfa.DFA(DFA_alphabet)
     DFA_states = set()
     DFA_transitions = set()
     subset_to_state = {}
     i = 0
-    # Cria objetos estado da DFA
+
+    # Cria objetos estado do autômato determinístico
     for j, subset in enumerate(Q):
 
         is_initial = (subset == q0)
@@ -100,13 +98,11 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
 
         if len(subset) > 0:
             qi = fa.State(name='q' + str(i), is_initial=is_initial, is_final=is_final)
-
             DFA_states.add(qi)
             subset_to_state[subset] = qi
             i+=1
 
-    #Transições DFA - precisa mapear Delta
-    # Set -> ordem não é garantida
+    # Cria objetos transições do autômato determinístico
     for subset in Q:
 
         for s in DFA_alphabet:
@@ -116,13 +112,11 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
 
             source_state = subset_to_state[subset]
             target_state = subset_to_state[next_subset]
-
             ti: fa.Transition = fa.Transition(source_state=source_state, input_symbol=s, target_state=target_state)
             DFA_transitions.add(ti)
 
-    
+    # Adiciona os objetos para o autômato determinístico
     final_DFA.addStates(DFA_states)
     final_DFA.addTransitions(DFA_transitions)
-
 
     return final_DFA
