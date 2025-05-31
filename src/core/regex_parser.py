@@ -1,6 +1,29 @@
+from __future__ import annotations
+from typing import List
 from . import utils
+from model.dfa import DFA
 
 SEPARATOR = ':=='
+
+class TokenType:
+    def __init__(self, name: str, regex: List[RegexToken], dfa: DFA = None):
+        self.name = name
+        self.regex = regex
+        self.dfa = dfa
+        
+    def __repr__(self):
+        regex_str = "".join(str(tok) for tok in self.regex)
+        return f"<TokenType(name='{self.name}', regex='{regex_str}')>"
+    
+    def __str__(self):
+        regex_str = "".join(str(tok) for tok in self.regex)
+        dfa_str = f"DFA states: {len(self.dfa.states)}" if self.dfa else "No DFA"
+        return (
+            f"TokenType:\n"
+            f"  Name  : {self.name}\n"
+            f"  Regex : {regex_str}\n"
+            f"  {dfa_str}"
+        )
 
 class RegexToken:
     CHAR = 'CHAR'
@@ -97,7 +120,7 @@ def insert_concatenation(tokens: list[RegexToken]) -> list[RegexToken]:
                 result.append(RegexToken(RegexToken.CONCAT))
     return result
 
-def get_regex_from_file(file_path: str) -> list[tuple[str, list[RegexToken]]]:
+def get_regex_from_file(file_path: str) -> list[TokenType]:
     """
     Lê expressões regulares de um arquivo no formato:
     TOKEN:== REGEX
@@ -105,6 +128,7 @@ def get_regex_from_file(file_path: str) -> list[tuple[str, list[RegexToken]]]:
     """
     lines = utils.get_file_lines(file_path)
     regex_list = []
+    tokentype_list = []
     
     if not lines:
         raise ValueError(f"O arquivo {file_path} está vazio ou não contém uma regex válida.")
@@ -118,5 +142,6 @@ def get_regex_from_file(file_path: str) -> list[tuple[str, list[RegexToken]]]:
     for i, (categoria, regex) in enumerate(regex_list):
         tokens = tokenize_regex(regex)
         tokens_with_concat = insert_concatenation(tokens)
-        regex_list[i] = (categoria, tokens_with_concat)
-    return regex_list
+        tokentype = TokenType(name=categoria, regex=tokens_with_concat, dfa=None)  # DFA será construído posteriormente
+        tokentype_list.append(tokentype)
+    return tokentype_list
