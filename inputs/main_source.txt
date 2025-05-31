@@ -1,4 +1,4 @@
 beg main;
-func soma(x, y);
-  ret x + y;
+func menos -> x -> y;
+  ret x - y;
 end;
