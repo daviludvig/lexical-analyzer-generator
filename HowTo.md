@@ -21,6 +21,13 @@ python src/main.py <regex_file> <source_file>
 
 The default input file is `inputs/main.txt`. You can change it with `-in {file}` flag.
 
+After running the script, it will output the results to the console and also save them to `outputs/` folder.
+
+## Output
+- Every DFA built from the regexes will be saved in a separate file in the `outputs/automatos` folder. 
+- The symbol table will be saved in `outputs/symbol_table.txt`.
+- The tokens built from the source file will be saved in `outputs/tokens.txt`.
+
 ## Input file format
 ### Regex file
 The regex file should contain one regex per line. Following the rule:
