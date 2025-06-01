@@ -69,10 +69,8 @@ def _get_tokens(source_code : str, dfas : List[DFA], symbol_table : SymbolTable)
                 while i + 1 < len(source_code) and source_code[i + 1] not in (" ", "\n"):
                     i += 1
                     lexeme_obj.increase(source_code[i])
-                lexeme_obj.decrease()
                 # Cria o token de erro
                 _add_token(lexeme_obj, dfas, symbol_table, tokens, forced_type="ERRO")
-                curr_token = Token()
                 lexeme_obj = Lexeme()
                 i += 1
                 continue
@@ -85,7 +83,6 @@ def _get_tokens(source_code : str, dfas : List[DFA], symbol_table : SymbolTable)
             # Checa na TS e nos DFAs para qual tipo de token o lexema pertence
             _add_token(lexeme_obj, dfas, symbol_table, tokens)
             
-            curr_token = Token()
             lexeme_obj = Lexeme()
 
         i += 1
