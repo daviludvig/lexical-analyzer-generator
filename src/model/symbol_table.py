@@ -114,6 +114,12 @@ class SymbolTable:
 
     def __str__(self):
         output = ["Tabela de Símbolos:"]
+        if not self.table:
+            return "\n".join(output)
+        
+        max_len = max(len(lexeme.get()) for lexeme in self.table) + 1
+    
         for lexeme, token_type in self.table.items():
-            output.append(f"  {lexeme.get():<10} <=> {token_type}")
+            output.append(f"  {lexeme.get():<{max_len}} <=> {token_type}")
+    
         return "\n".join(output)
