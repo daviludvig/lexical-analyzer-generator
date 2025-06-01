@@ -33,10 +33,23 @@ def _get_tokens(source_code : str, dfas : List[DFA], symbol_table : SymbolTable)
     Se o lexema não for reconhecido, é adicionado um token de erro com o lexema e o tipo "ERRO".
     
     """
+    
     tokens = []
 
+    
+    def _add_token(lexeme_obj: Lexeme, dfas: List[DFA], symbol_table: SymbolTable, tokens: List[Token], forced_type: str = None) -> None:
+        """
+        Define o tipo do token para o lexema atual, cria o token e o adiciona à lista de tokens.
+        """
+        token_type = forced_type if forced_type else _get_lexeme_type(lexeme_obj, dfas, symbol_table)
+        token = Token()
+        token.lexeme = lexeme_obj.get()
+        token.tokentype = token_type
+        tokens.append(token)
+        
+        symbol_table.insert(lexeme_obj, token_type)
+    
     lexeme_obj = Lexeme()
-    curr_token = Token()
     i = 0
     while i != len(source_code):
         
@@ -53,15 +66,12 @@ def _get_tokens(source_code : str, dfas : List[DFA], symbol_table : SymbolTable)
             # Se o lexema não é mais reconhecido no "big automato" e o char atual não for espaço, nova linha ou ponto e vírgula, é um erro
             if ((source_code[i] != " ") and (source_code[i] != "\n") and (source_code[i] != ";")):  # Ponto e vírgula só pode ser usado para final de sentença
                 # Forma o lexema de erro
-                while ((source_code[i] != " ") and (source_code[i] != "\n")):
+                while i + 1 < len(source_code) and source_code[i + 1] not in (" ", "\n"):
                     i += 1
                     lexeme_obj.increase(source_code[i])
                 lexeme_obj.decrease()
-                curr_token.lexeme = lexeme_obj.get()
-                # Define o tipo do token como ERRO
-                curr_token.tokentype = "ERRO"
-                tokens.append(curr_token)
-                symbol_table.insert(lexeme_obj, curr_token.tokentype)
+                # Cria o token de erro
+                _add_token(lexeme_obj, dfas, symbol_table, tokens, forced_type="ERRO")
                 curr_token = Token()
                 lexeme_obj = Lexeme()
                 i += 1
@@ -73,15 +83,16 @@ def _get_tokens(source_code : str, dfas : List[DFA], symbol_table : SymbolTable)
             lexeme_obj.decrease()
             
             # Checa na TS e nos DFAs para qual tipo de token o lexema pertence
-            lexeme_type = _get_lexeme_type(lexeme_obj, dfas, symbol_table)
+            _add_token(lexeme_obj, dfas, symbol_table, tokens)
             
-            curr_token.lexeme = lexeme_obj.get()
-            curr_token.tokentype = lexeme_type
-            tokens.append(curr_token)
             curr_token = Token()
             lexeme_obj = Lexeme()
 
         i += 1
+        
+    # Se o lexema final não for vazio, adiciona o token correspondente
+    if lexeme_obj.get() != "":
+        _add_token(lexeme_obj, dfas, symbol_table, tokens)
         
     return tokens
 
@@ -100,5 +111,4 @@ def _get_lexeme_type(lexeme: Lexeme, dfas: List[DFA], symbol_table : SymbolTable
     
     for i in range(1, len(dfas)):
         if dfas[i].isValidInput(lexeme.get()):
-            symbol_table.insert(lexeme, dfas[i].name)
             return dfas[i].name
