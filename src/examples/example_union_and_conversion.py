@@ -7,20 +7,27 @@ import core.NFAtoDFA as conversion
 
 def main():
     
+    print(f"Exemplo de união de DFAs e conversão para DFA\n")
+    
     det_fa_1 : dfa.DFA = example_dfa_1.build_dfa()
     det_fa_2 : dfa.DFA = example_dfa_2.build_dfa()
     
+    print("DFA 1:\n")
+    print(det_fa_1.getTabularFormat())
+    
+    print("\nDFA 2:\n")
+    print(det_fa_2.getTabularFormat())
     
     new_nfa : nfa.NFA = union.union(det_fa_1, det_fa_2)
-    print ("Resultado da união: \n")
+    print ("\nResultado da união: \n")
 
-    print(new_nfa, "\n")
+    print(new_nfa.getTabularFormat(), "\n")
 
     new_det_fa = conversion.NFAtoDFA(new_nfa)
 
     print ("Resultado da conversão: \n")
 
-    print("\n" + new_det_fa.getTabularFormat())
+    print(new_det_fa.getTabularFormat())
     
 if __name__ == "__main__":
     main()

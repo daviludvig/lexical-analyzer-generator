@@ -13,6 +13,8 @@ test_regexes = [
 
 def main():
 
+    print(f"Exemplo de análise de expressões regulares")
+
     for regex in test_regexes:
         print(f"\nRegex: {regex}")
         tokens = tokenize_regex(regex)

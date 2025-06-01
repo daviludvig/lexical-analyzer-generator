@@ -26,9 +26,11 @@ def build_nfa() -> nfa.NFA:
 
 def main():
     
+    print(f"Exemplo de construção e utilização de NFA\n")
+    
     no_det_fa : nfa.NFA = build_nfa()
     
-    print(no_det_fa)
+    print(no_det_fa.getTabularFormat())
     
     input_example1 : str = "a"
     input_example2 : str = "ab"
@@ -37,15 +39,23 @@ def main():
     input_example5 : str = "aa"
     
     
-    print(f"Is input '{input_example1}' valid: {no_det_fa.isValidInput(input_example1)}")  #resultado esperado: TRUE
-    print(f"Is input '{input_example2}' valid: {no_det_fa.isValidInput(input_example2)}")  #resultado esperado: TRUE
-    print(f"Is input '{input_example3}' valid: {no_det_fa.isValidInput(input_example3)}")  #resultado esperado: TRUE
-    print(f"Is input '{input_example4}' valid: {no_det_fa.isValidInput(input_example4)}")  #resultado esperado: TRUE
-    print(f"Is input '{input_example5}' valid: {no_det_fa.isValidInput(input_example5)}")  #resultado esperado: FALSE
+    print(f"\nIs input '{input_example1}' valid for NFA: {no_det_fa.isValidInput(input_example1)}")  #resultado esperado: TRUE
+    print(f"Is input '{input_example2}' valid for NFA: {no_det_fa.isValidInput(input_example2)}")  #resultado esperado: TRUE
+    print(f"Is input '{input_example3}' valid for NFA: {no_det_fa.isValidInput(input_example3)}")  #resultado esperado: TRUE
+    print(f"Is input '{input_example4}' valid for NFA: {no_det_fa.isValidInput(input_example4)}")  #resultado esperado: TRUE
+    print(f"Is input '{input_example5}' valid for NFA: {no_det_fa.isValidInput(input_example5)}")  #resultado esperado: FALSE
     
-    print("\n" + no_det_fa.getTabularFormat())
-
-    print(no_det_fa._cloneWithPrefix("copy_"))
+    print(f"\nClonando o NFA com prefixo 'copy_'")
+    copy = no_det_fa._cloneWithPrefix("copy_")
+    print(copy.getTabularFormat())
+    
+    print(f"\nIs input '{input_example1}' valid for copy NFA: {copy.isValidInput(input_example1)}")  #resultado esperado: TRUE
+    print(f"Is input '{input_example2}' valid for copy NFA: {copy.isValidInput(input_example2)}")  #resultado esperado: TRUE
+    print(f"Is input '{input_example3}' valid for copy NFA: {copy.isValidInput(input_example3)}")  #resultado esperado: TRUE
+    print(f"Is input '{input_example4}' valid for copy NFA: {copy.isValidInput(input_example4)}")  #resultado esperado: TRUE
+    print(f"Is input '{input_example5}' valid for copy NFA: {copy.isValidInput(input_example5)}")  #resultado esperado: FALSE
+    
+    
 
 if __name__ == "__main__":
     main()

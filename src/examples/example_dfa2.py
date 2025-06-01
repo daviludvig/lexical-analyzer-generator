@@ -27,12 +27,13 @@ def build_dfa() -> dfa.DFA:
 
 def main():
     
+    print(f"Exemplo de construção e utilização de DFA\n")
+    
     det_fa : dfa.DFA = build_dfa()
-    print(det_fa)
+    print(det_fa.getTabularFormat())
     
     input_example : str = "abaabbba"
-    print(f"Is input '{input_example}' valid: {det_fa.isValidInput(input_example)}")
-    print("\n" + det_fa.getTabularFormat())
+    print(f"\nIs input '{input_example}' valid for DFA: {det_fa.isValidInput(input_example)}")
 
 
 if __name__ == "__main__":
