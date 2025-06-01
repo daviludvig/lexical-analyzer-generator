@@ -31,12 +31,9 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     # Cria um frozenset do e-fecho de estado inicial para poder usar como chave em dicionários
     qo_closure = cached_epsilon_closure([nfa.initial_state])
     q0 = frozenset(qo_closure)  
-    q0 = frozenset(qo_closure)  
 
     # Conjunto de estados do novo autômato
     Q = set([q0])
-    # Conjunto de estados que ainda não foram processados quanto a transições
-    unprocessedQ = Q.copy() 
     # Conjunto de estados que ainda não foram processados quanto a transições
     unprocessedQ = Q.copy() 
 
