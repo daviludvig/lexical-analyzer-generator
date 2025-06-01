@@ -9,6 +9,9 @@ regex = "(a|b)+c?"
 
 def main():
 
+    print(f"Exemplo de conversão de expressão regular para NFA")
+    print(f"Expressão regular: {regex}\n")
+
     # Passo 1: Tokenizar
     tokens = tokenize_regex(regex)
     print("Tokens:", tokens)
