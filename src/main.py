@@ -10,6 +10,7 @@ from model.symbol_table import TokenType
 from core.union import union
 import core.source_parser as source_parser
 from model.symbol_table import SymbolTable
+import core.utils as utils
 
 
 def get_dfas_from_tokentypes(tokentypes : List[TokenType]) -> List[DFA]:
@@ -30,6 +31,20 @@ def get_dfas_from_tokentypes(tokentypes : List[TokenType]) -> List[DFA]:
         dfas.append(dfa)
     return dfas
 
+def write_in_files(tokens : List[TokenType], dfas : List[DFA], symbol_table : SymbolTable) -> None:
+    """
+    Escreve os resultados encontrados em um arquivo de saída.
+    """
+    utils.prepare_output_directory()
+    for dfa in dfas:
+        if dfa is not None:
+            utils.write_in_file(f"{utils.OUTPUT_PATH_DIR}/automatos/{dfa.name}.txt", dfa.getTabularFormat())
+    
+    for token in tokens:
+        utils.write_in_file(f"{utils.OUTPUT_PATH_DIR}/tokens.txt", str(token))
+        
+    utils.write_in_file(f"{utils.OUTPUT_PATH_DIR}/symbol_table.txt", str(symbol_table))
+
 def get_full_language_dfa(dfas : List[DFA]) -> DFA:
     """
     Combina todos os DFAs em um único DFA que aceita a linguagem de todos os lexemas válidos.
@@ -38,6 +53,8 @@ def get_full_language_dfa(dfas : List[DFA]) -> DFA:
     
     for i in range(2, len(dfas)):
         full_language_dfa = nfa_to_dfa(union(full_language_dfa, dfas[i]))
+    
+    full_language_dfa.name = "FULL_LANGUAGE"
     
     return full_language_dfa
 
@@ -69,6 +86,8 @@ def main() -> None:
     tokens = source_parser.parse_source_code_from_file(source_file, dfas, symbol_table)
     for token in tokens:
         print(token)
+        
+    write_in_files(tokens, dfas, symbol_table)
         
 if __name__ == "__main__":
     main()
