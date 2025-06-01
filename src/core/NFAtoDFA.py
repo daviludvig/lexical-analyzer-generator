@@ -8,13 +8,9 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     """ Converte um autômato não determinístico em autômato determinístico.   
         O autômato de saída possui um estado para cada subconjunto de estados alcançável da entrada.
     """
-    """ Converte um autômato não determinístico em autômato determinístico.   
-        O autômato de saída possui um estado para cada subconjunto de estados alcançável da entrada.
-    """
 
     epsilon_cache = {}
 
-    # Função auxiliar para otimizar e-fecho
     # Função auxiliar para otimizar e-fecho
     def cached_epsilon_closure(states):
         key = frozenset(states)
@@ -24,7 +20,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     
     deltaHat_cache = {}
 
-    # Função auxiliar para otimizar deltaHat
     # Função auxiliar para otimizar deltaHat
     def cached_deltaHat(q, a):
         key = (q, a)
@@ -37,7 +32,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     qo_closure = cached_epsilon_closure([nfa.initial_state])
     q0 = frozenset(qo_closure)  
 
-    # Conjunto de estados do novo autômato
     # Conjunto de estados do novo autômato
     Q = set([q0])
     # Conjunto de estados que ainda não foram processados quanto a transições
@@ -65,8 +59,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
             moveResult = set()
 
             # Para cada estado do subconjunto
-
-            # Para cada estado do subconjunto
             for q in qSet:
                 try:
                    moveResult |= cached_deltaHat(q, a)
@@ -91,8 +83,6 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
 	# Q - set de todos os estados, com diversos frozensets, que são combinação de estados da NFA
     # F - set de todos estados finais
     # delta [estado] [simbolo do alfabeto]
-
-    
     final_DFA = dfa.DFA(DFA_alphabet)
     DFA_states = set()
     DFA_transitions = set()
