@@ -1,4 +1,6 @@
 beg main;
 func _menos -> x -> y;
   ret x - y;
+func _div -> x -> y;
+  ret x / y;
 end;
