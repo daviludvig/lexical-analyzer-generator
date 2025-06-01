@@ -61,6 +61,7 @@ def _get_tokens(source_code : str, dfas : List[DFA], symbol_table : SymbolTable)
                 # Define o tipo do token como ERRO
                 curr_token.tokentype = "ERRO"
                 tokens.append(curr_token)
+                symbol_table.insert(lexeme_obj, curr_token.tokentype)
                 curr_token = Token()
                 lexeme_obj = Lexeme()
                 i += 1

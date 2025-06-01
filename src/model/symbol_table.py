@@ -7,6 +7,12 @@ class Token:
     def __init__(self, lexeme: Lexeme = None, tokentype: Union[TokenType,str] = None):
         self.lexeme = lexeme
         self.tokentype = tokentype
+        
+    def __repr__(self):
+        return f"<Token(lexeme={self.lexeme}, tokentype={self.tokentype})>"
+    
+    def __str__(self):
+        return (f"<{self.lexeme}, {self.tokentype.name if isinstance(self.tokentype, TokenType) else self.tokentype}>")
 
 class TokenType:
     def __init__(self, name: str, regex: List[RegexToken], dfa: DFA = None):
@@ -109,5 +115,5 @@ class SymbolTable:
     def __str__(self):
         output = ["Tabela de Símbolos:"]
         for lexeme, token_type in self.table.items():
-            output.append(f"  {lexeme.get():<20} <=> {token_type.name}")
+            output.append(f"  {lexeme.get():<10} <=> {token_type}")
         return "\n".join(output)

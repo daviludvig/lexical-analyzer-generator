@@ -68,8 +68,8 @@ def main() -> None:
     
     tokens = source_parser.parse_source_code_from_file(source_file, dfas, symbol_table)
     for token in tokens:
-        print(f"<{token.lexeme}, {token.tokentype}>")
-    
+        print(token)
+        
 if __name__ == "__main__":
     main()
     sys.exit(0)
