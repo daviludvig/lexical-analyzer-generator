@@ -31,9 +31,12 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
     # Cria um frozenset do e-fecho de estado inicial para poder usar como chave em dicionários
     qo_closure = cached_epsilon_closure([nfa.initial_state])
     q0 = frozenset(qo_closure)  
+    q0 = frozenset(qo_closure)  
 
     # Conjunto de estados do novo autômato
     Q = set([q0])
+    # Conjunto de estados que ainda não foram processados quanto a transições
+    unprocessedQ = Q.copy() 
     # Conjunto de estados que ainda não foram processados quanto a transições
     unprocessedQ = Q.copy() 
 
@@ -45,16 +48,17 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
 
     DFA_alphabet = nfa.alphabet - {"&"}
 
+
     # Enquanto os estados não forem marcados
     while unprocessedQ: 
-        
+
         # Retira um subconjunto de estados dos que não foram marcados e processa suas transições
         qSet = unprocessedQ.pop()
 
         # Transições do subconjunto de estados
         delta[qSet] = {}
 
-        # Para símbolo do alfabeto do autômato determinístico
+        # Para símbolo do alfabeto do autômato determinístico, verifica as transições
         for a in DFA_alphabet:
             moveResult = set()
 
@@ -79,10 +83,7 @@ def NFAtoDFA(nfa: nfa.FA) -> dfa.DFA:
         if (qSet & nfa.final_states): 
             F.append(qSet)
 
-	# Aqui vou ter: 
-	# Q - set de todos os estados, com diversos frozensets, que são combinação de estados da NFA
-    # F - set de todos estados finais
-    # delta [estado] [simbolo do alfabeto]
+    # Inicializa elementos do novo autômato determinístico
     final_DFA = dfa.DFA(DFA_alphabet)
     DFA_states = set()
     DFA_transitions = set()
