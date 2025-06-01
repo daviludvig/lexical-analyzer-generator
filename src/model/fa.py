@@ -47,6 +47,7 @@ class Transition:
         return hash((self.source_state, self.input_symbol, self.target_state))
 
 class FA(ABC):
+
     def __init__(self, alphabet : Set[str], name = None) -> None:
         self.states: Set[State] = set()
         self.alphabet: Set[str] = alphabet
