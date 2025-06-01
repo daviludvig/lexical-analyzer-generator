@@ -9,6 +9,7 @@ from model.dfa import DFA
 from model.symbol_table import TokenType
 from core.union import union
 import core.source_parser as source_parser
+from model.symbol_table import SymbolTable
 
 
 def get_dfas_from_tokentypes(tokentypes : List[TokenType]) -> List[DFA]:
@@ -63,10 +64,12 @@ def main() -> None:
     
     dfas[0] = get_full_language_dfa(dfas)
     
-    tokens = source_parser.parse_source_code_from_file(source_file, dfas)
-    for token in tokens:
-        print(f"<{token.lexeme}, {token.tokentype}>")
+    symbol_table = SymbolTable()
     
+    tokens = source_parser.parse_source_code_from_file(source_file, dfas, symbol_table)
+    for token in tokens:
+        print(token)
+        
 if __name__ == "__main__":
     main()
     sys.exit(0)
