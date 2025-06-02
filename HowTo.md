@@ -60,3 +60,54 @@ To add a new regex, simply add a new line to the regex file following the format
 ```
 <name> :== <regex>
 ```
+
+## Processing flow
+1. **Argument Parsing**
+
+   * The program expects two command-line arguments: a regex definition file and a source code file.
+   * If not provided, it exits with usage instructions.
+
+2. **File Validation**
+
+   * It checks if both files exist (`regex_file` and `source_file`).
+   * If either is missing, it exits with an error message.
+
+3. **Token Type Generation**
+
+   * Parses the regex definition file to extract token types (`TokenType` objects).
+   * Each token type includes a regular expression associated with a name (e.g., `ID`, `NUM`, `PR`, etc.).
+
+4. **DFA Construction**
+
+   * Each regular expression is converted into a DFA using:
+
+     * **Regex to postfix** (Shunting Yard algorithm),
+     * **Postfix to NFA**,
+     * **NFA to DFA**.
+   * A list of DFAs is created, where the first position (`dfas[0]`) is initially set to `None` to hold the full language DFA later.
+
+5. **Full Language DFA Generation**
+
+   * All DFAs are merged into a single **"full language DFA"** using epsilon-union and determinization.
+   * This unified DFA (`dfas[0]`) accepts the language of all valid lexemes (full language).
+
+6. **Symbol Table Initialization**
+
+   * A `SymbolTable` instance is created to track lexemes and their token types.
+
+7. **Source Code Tokenization**
+
+   * The source code is read and parsed using the DFAs.
+   * Lexemes are identified, validated, and categorized into tokens or errors.
+   * Tokens are printed to the console.
+
+8. **Output Generation**
+
+   * The output directory is cleaned and recreated.
+   * For each DFA, its tabular representation is saved to a file.
+   * The list of tokens is saved in `tokens.txt`.
+   * The symbol table is saved in `symbol_table.txt`.
+
+9. **Program Exit**
+
+   * The program exits with `sys.exit(0)` after successful execution.
